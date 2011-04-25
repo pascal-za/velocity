@@ -8,21 +8,19 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 require 'rake'
-
 require 'jeweler'
+require 'simplecov'
+SimpleCov.start
+
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "velocity"
   gem.homepage = "http://github.com/pascalh1011/velocity"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Provides a barebones, but supremely quick way of querying your ActiveRecord database.}
+  gem.description = %Q{Provides a barebones, but supremely quick way of querying your ActiveRecord database.}
   gem.email = "101pascal@gmail.com"
   gem.authors = ["Pascal Houliston"]
-  # Include your dependencies below. Runtime dependencies are required when using your gem,
-  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
-  #  gem.add_development_dependency 'rspec', '> 1.2.3'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -33,21 +31,11 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+task :migrate do
+  require File.join(File.dirname(__FILE__), 'test', 'helper')
+  require 'active_record'
+  load TEST_ROOT.join('db', 'migrations.rb')
 end
 
 task :default => :test
 
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "velocity #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end

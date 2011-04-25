@@ -1,6 +1,10 @@
-= velocity
+= Velocity
 
-Description goes here.
+Provides a barebones, but supremely quick way of querying your ActiveRecord database.
+
+== Progress
+
+Just getting started. Watch this space.
 
 == Contributing to velocity
  
