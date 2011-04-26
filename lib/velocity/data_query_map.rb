@@ -1,3 +1,4 @@
+require 'velocity/mapped_row'
 require 'velocity/results/postgresql'
 
 module Velocity
@@ -27,7 +28,7 @@ module Velocity
     end
     
     def select(fields='')
-      @fields += fields unless fields.blank?
+      @fields = [@fields, fields].join(', ') unless fields.blank?
       self
     end
     
@@ -60,13 +61,23 @@ module Velocity
     def first
       limit(1)
       prepare_and_run_query
-      @results
+      @results.first
     end 
     
     private
     def prepare_and_run_query
-      sql = ''
-      @results = @handler.new("", adapter)
+      unless @joins.blank?
+        @joins = @joins.collect do |association|
+          association_reflection = @model.reflect_on_association(association)
+          "LEFT JOIN #{association_reflection.table_name} ON #{@model.table_name}.#{association_reflection.association_foreign_key} = #{association_reflection.table_name}.#{association_reflection.klass.primary_key_name}"
+        end.join
+      end
+      @fields = "#{@model.table_name}.*" if @fields.blank?
+      @limit = (@limit.to_i > 0)? "LIMIT #{@limit}" : ""
+      @conditions = "WHERE #{@conditions.join(' AND ')}" unless @conditions.blank?
+              
+      sql = "SELECT #{@fields} FROM #{@model.table_name} "+[@joins, @conditions, @limit].reject(&:blank?).join(' ')
+      @results = @handler.new(sql, @model.connection)
     end
   end
 end

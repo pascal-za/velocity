@@ -14,6 +14,8 @@ GEM
     ansi (1.2.3)
     arel (2.0.9)
     builder (2.1.2)
+    faker (0.9.5)
+      i18n (~> 0.4)
     git (1.2.5)
     i18n (0.5.0)
     jeweler (1.5.2)
@@ -40,6 +42,7 @@ DEPENDENCIES
   activerecord (~> 3.0.0)
   activesupport (~> 3.0.0)
   ansi
+  faker
   jeweler
   mysql2
   pg

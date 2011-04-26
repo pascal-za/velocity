@@ -18,4 +18,5 @@ group :development do
   gem "term-ansicolor"
   gem "turn", ">= 0.8.2"
   gem "ansi"
+  gem "faker"
 end
