@@ -2,9 +2,28 @@
 
 Provides a barebones, but supremely quick way of querying your ActiveRecord database.
 
-== Progress
+Velocity uses adapter-specific optimizations (only pg, and mysql2 support planned for now) to reduce memory consumption
+and processing time **significantly** when working with large amounts of data. This is typically useful in situations like reporting or
+cached web services where you just need quick access to the rows in your database.
 
-Just getting started. Watch this space.
+IMPORTANT: This is a work in progress, no version has been released yet.
+
+== How to
+
+Include the query module into your ActiveRecord model
+
+  class Foo < ActiveRecord::Base
+    include Velocity::Query
+  end
+  
+This adds a .data() method onto your model class. Use this pretty much like the ActiveRecord 3 query interface.
+
+  Foo.data.where(:designation => 'Superfoo').limit(1000).order('name ASC').each do |foo|
+    puts foo.title
+  end
+  
+What should immediately apparent is that rather than getting a list of ActiveRecord model instances (i.e. Foo), you get an
+iterator object. This object consists of accessor methods reflecting all the fields in your query.
 
 == Contributing to velocity
  

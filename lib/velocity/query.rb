@@ -5,8 +5,8 @@ module Velocity
     extend ActiveSupport::Concern
     
     included do
-      @@data = DataQueryMap.new(self)
-      cattr_reader :data
+      cattr_accessor :data
+      self.data = DataQueryMap.new(self)
     end
   end
 end
