@@ -1,5 +1,6 @@
 require 'velocity/mapped_row'
 require 'velocity/results/postgresql'
+require 'velocity/results/mysql2'
 
 module Velocity
   class DataQueryMap

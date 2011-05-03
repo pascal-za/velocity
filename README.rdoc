@@ -2,14 +2,13 @@
 
 Provides a barebones, but supremely quick way of querying your ActiveRecord database.
 
-Velocity uses adapter-specific optimizations (only pg, and mysql2 support planned for now) to reduce memory consumption
-and processing time **significantly** when working with large amounts of data. This is typically useful in situations like 
+Velocity uses adapter-specific optimizations to reduce memory consumption and processing time **significantly** when 
+working with large amounts of data. This is typically useful in situations like 
 reporting or cached web services where you just need quick access to the rows in your database.
 
 For now, this is mostly achieved by avoiding the creation of any Ruby data structures (lazy column and row loading), but
 there are plans to use asynchronous queries with perhaps fibres or threads to speed processing up further.
 
-Supported adapters: PostgreSQL
 
 == How to
 
@@ -32,6 +31,13 @@ iterator object. This object consists of accessor methods reflecting all the fie
 
 Using the joins() method essentially results in a LEFT JOIN (in contrast to normal ActiveRecord), and the primary key
 of the joined association is automatically selected as foos_id (where foos is your joined table name).
+
+== Adapter Status ==
+
+Performance tests will be further expanded by method in the future
+
+* PostgreSQL (pg) - About 3-8 times faster than ActiveRecord, memory usage not currently measurable
+* MySQL2 - About twice as fast as ActiveRecord, memory usage worse at the moment (WIP)
 
 == Debugging
 

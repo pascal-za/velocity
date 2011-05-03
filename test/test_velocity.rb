@@ -2,8 +2,8 @@ require 'helper'
 
 class TestVelocity < Test::Unit::TestCase
   def setup
-    @foo_a = Foo.create(:some_string_field => "Value A")
-    @foo_b = Foo.create(:some_string_field => "Value A", :another_string_field => "Value B")
+    @foo_a = Foo.create(:some_string_field => "Value A", :some_integer_field => 1)
+    @foo_b = Foo.create(:some_string_field => "Value A", :another_string_field => "Value B", :some_integer_field => 2)
     @foo_a.bars.create(:a_string_field => "A")
     @foo_b.bars.create(:a_string_field => "B")
   end
@@ -65,10 +65,9 @@ class TestVelocity < Test::Unit::TestCase
   end
   
   should "return results in the correct order" do
-    results = Foo.data.where(:some_string_field => "Value A").order("another_string_field ASC").collect { |r| r.another_string_field }
+    results = Foo.data.where(:some_string_field => "Value A").order("some_integer_field DESC").collect { |r| r.some_integer_field.to_i }
     
-    assert_equal("Value B", results.first)
-    assert_nil(results.last)
+    assert_equal([2,1], results)
   end
   
   should "join associations when requested and return appropriate columns" do

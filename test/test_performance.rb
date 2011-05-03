@@ -16,6 +16,7 @@ class TestPerformance < Test::Unit::TestCase
 
 
   should "perform favourably compared to ActiveRecord" do
+    #return
     t = table
     t.headings = ['Name', 'Total Rows', 'Total Processing Time (ms)', 'Memory Consumed (KB)']
     count = Foo.count('id')
