@@ -3,10 +3,11 @@
 Provides a barebones, but supremely quick way of querying your ActiveRecord database.
 
 Velocity uses adapter-specific optimizations (only pg, and mysql2 support planned for now) to reduce memory consumption
-and processing time **significantly** when working with large amounts of data. This is typically useful in situations like reporting or
-cached web services where you just need quick access to the rows in your database.
+and processing time **significantly** when working with large amounts of data. This is typically useful in situations like 
+reporting or cached web services where you just need quick access to the rows in your database.
 
-IMPORTANT: This is a work in progress, no version has been released yet.
+For now, this is mostly achieved by avoiding the creation of any Ruby data structures (lazy column and row loading), but
+there are plans to use asynchronous queries with perhaps fibres or threads to speed processing up further.
 
 == How to
 
@@ -25,6 +26,32 @@ This adds a .data() method onto your model class. Use this pretty much like the 
 What should immediately apparent is that rather than getting a list of ActiveRecord model instances (i.e. Foo), you get an
 iterator object. This object consists of accessor methods reflecting all the fields in your query.
 
+*N.B:* Only simple where(), limit(), order(), group(), and joins() calls are supported.
+
+Using the joins() method essentially results in a LEFT JOIN (in contrast to normal ActiveRecord), and the primary key
+of the joined association is automatically selected as foos_id (where foos is your joined table name).
+
+== Debugging
+
+You can inspect the attributes of a row by calling:
+
+  Foo.data.each do |row|
+    puts row.inspect
+  end
+ 
+  >> #Velocity::MappedRow --> {"id"=>"100759", "some_string_field"=>"Value A"}
+ 
+
+== Velocity development 
+
+Please copy config/database.sample.yml to config/database.yml and adjust to your system settings.
+
+  > rake test
+  
+The first time you run the tests a large test database will be created (for the performance tests), so
+it is likely to take a very very long time on the first run.
+ 
+
 == Contributing to velocity
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
@@ -35,8 +62,26 @@ iterator object. This object consists of accessor methods reflecting all the fie
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
-== Copyright
+== License
 
-Copyright (c) 2011 Pascal Houliston. See LICENSE.txt for
-further details.
+Copyright (c) 2011 Pascal Houliston
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 

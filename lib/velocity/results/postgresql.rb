@@ -1,36 +1,69 @@
 module Velocity
   class PostgreSQLResult
+    class PostgreSQLMappedRow < MappedRow
+  
+      def initialize(pg_query)
+        @fields = pg_query.fields
+        @pg_query = pg_query
+        
+        # It is imperitive that the adapter return the array in the same sequence of fields provided above
+        # If this isn't the case, some re-ordering of the field KEYS should take place
+        @fields.each_with_index do |field, index|
+          define_singleton_method(field) do
+            pg_query.getvalue(@tuple, index)
+          end
+        end
+      end
+      
+      def attributes
+        @pg_query[@tuple] # Try to avoid calling this, its relatively slow.
+      end
+    end
+    
     def initialize(sql, adapter)
       @results = adapter.execute(sql)
-      @mapping = MappedRow.new(@results.fields)
+      @mapping = PostgreSQLMappedRow.new(@results)
+      @num_tuples = @results.num_tuples
     end
     
     def collect(&block)
       @collected = []    
-      @results.each do |row|
-        @collected << yield(@mapping.__apply_context(row))
+      @results.num_tuples.times do |tuple|
+        @mapping.tuple = tuple
+        @collected << yield(@mapping)
       end
       cleanup
       @collected
     end
     
     def first
-      @mapping.__apply_context(@results[0]).tap { cleanup }
+      self.[](0)
     end
     
     def [](index)
-      @mapping.__apply_context(@results[index])
+      @mapping.tap do |mapping|
+        mapping.tuple = index
+      end
+    end
+    
+    def inspect
+      collect(&:attributes).inspect
+    end
+    
+    def to_yaml
+      collect(&:attributes).to_yaml
     end
     
     def each(&block)
-      @results.each do |row|
-        yield(@mapping.__apply_context(row))
+      @results.num_tuples.times do |tuple|
+        @mapping.tuple = tuple
+        yield(@mapping)
       end
       cleanup
     end
     
     def length
-      @results.num_tuples
+      @num_tuples
     end
     
     def cleanup
