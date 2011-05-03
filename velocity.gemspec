@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{velocity}
-  s.version = "0.0.1"
+  s.version = ""
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pascal Houliston"]
@@ -34,7 +34,8 @@ Gem::Specification.new do |s|
     "test/models/bar.rb",
     "test/models/foo.rb",
     "test/test_performance.rb",
-    "test/test_velocity.rb"
+    "test/test_velocity.rb",
+    "velocity.gemspec"
   ]
   s.homepage = %q{http://github.com/pascalh1011/velocity}
   s.licenses = ["MIT"]
