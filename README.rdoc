@@ -9,6 +9,8 @@ reporting or cached web services where you just need quick access to the rows in
 For now, this is mostly achieved by avoiding the creation of any Ruby data structures (lazy column and row loading), but
 there are plans to use asynchronous queries with perhaps fibres or threads to speed processing up further.
 
+Supported adapters: PostgreSQL
+
 == How to
 
 Include the query module into your ActiveRecord model
